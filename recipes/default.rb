@@ -17,7 +17,7 @@ if node['platform'] == 'ubuntu'
 end
 
 service "ssh" do
-  provider service_provider
+  provider service_provider if platform?('ubuntu')
   supports    [:start, :restart, :stop]
   action      [:enable]
   subscribes  :restart, "template[ssh]", :immediately
