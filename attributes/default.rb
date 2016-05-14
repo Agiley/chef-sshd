@@ -1,4 +1,2 @@
 default[:sshd][:port]                 =   22
-default[:sshd][:permit_root_login]    =   "yes"
-
-
+default[:sshd][:permit_root_login]    =   "no"

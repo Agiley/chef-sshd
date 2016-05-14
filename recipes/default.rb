@@ -6,9 +6,19 @@ template "ssh" do
   mode 0644
 end
 
+service_provider = nil
+
+if node['platform'] == 'ubuntu'
+  if Chef::VersionConstraint.new('>= 15.04').include?(node['platform_version'])
+    service_provider = Chef::Provider::Service::Systemd
+  elsif Chef::VersionConstraint.new('>= 12.04').include?(node['platform_version'])
+    service_provider = Chef::Provider::Service::Upstart
+  end
+end
+
 service "ssh" do
-  supports [:start, :restart, :stop]
-  action [:enable]
-  provider Chef::Provider::Service::Upstart if (node["platform"] == "ubuntu" && node["platform_version"].to_f >= 9.10)
-  subscribes :restart, "template[ssh]", :immediately
+  provider service_provider
+  supports    [:start, :restart, :stop]
+  action      [:enable]
+  subscribes  :restart, "template[ssh]", :immediately
 end
